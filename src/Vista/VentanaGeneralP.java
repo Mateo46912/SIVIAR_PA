@@ -24,14 +24,42 @@ public class VentanaGeneralP extends javax.swing.JFrame {
     /**
      * Creates new form VentanaGeneralP
      */
-    public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) {
+public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) {
         this.instruccionesDAO = instruccionesDAO;
         this.usuarioUsado = usuarioUsado;
+        
+        initComponents();   
+        
         this.controlador = new ControladorS(this, instruccionesDAO, usuarioUsado);
-        initComponents();
         this.setLocationRelativeTo(null);
         this.setName("S.I.V.A.R");
         this.setResizable(false);
+        
+        tblUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblUsuariosMouseClicked(evt);
+            }
+        });
+        javax.swing.table.DefaultTableCellRenderer centerRenderer = new javax.swing.table.DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(javax.swing.JLabel.CENTER);
+
+        tblUsuarios.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
+        tblUsuarios.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
+
+        javax.swing.table.DefaultTableCellRenderer passwordRenderer = new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            protected void setValue(Object value) {
+                String passwordReal = (value != null) ? value.toString() : "";
+                String mascara = "";
+                for (int i = 0; i < passwordReal.length(); i++) {
+                    mascara += "•";
+                }
+                super.setValue(mascara);
+            }
+        };
+        
+        passwordRenderer.setHorizontalAlignment(javax.swing.JLabel.CENTER);
+        tblUsuarios.getColumnModel().getColumn(2).setCellRenderer(passwordRenderer);
     }
 
 
@@ -546,7 +574,10 @@ public class VentanaGeneralP extends javax.swing.JFrame {
         // TODO add your handling code here:
     }                                             
 
-    private void btnNuevoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {                                                
+    private void btnNuevoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {    
+        txtContrasena.setEditable(true);
+        txtNombre.setEditable(true);
+        txtID.setEditable(true);                                            
         controlador.guardarNuevoUsuario();
     }                                               
 
@@ -579,7 +610,14 @@ public class VentanaGeneralP extends javax.swing.JFrame {
         txtNombre.setEditable(false);
         txtID.setEditable(false);
         controlador.seleccionarUsuarioDeTabla();    
+        
+
+    
+
+
     }
+
+    
 
     /**
      * @param args the command line arguments

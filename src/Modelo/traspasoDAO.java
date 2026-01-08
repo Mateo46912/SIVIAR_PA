@@ -31,7 +31,7 @@ public class traspasoDAO {
             return true; 
             
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Erro al registrar el usuario en la base de datos: " + e.toString());
+            JOptionPane.showMessageDialog(null, "Erro al registrar el usuario en la base de datos: ");
             return false;
         } finally {
             ConexionBD.cerrar();
@@ -57,7 +57,7 @@ public class traspasoDAO {
                 listaUsuariosBD.add(usuarioRecibido);
             }          
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error al obtener la lista de usuarios de la base de datos: " + e.toString());
+            JOptionPane.showMessageDialog(null, "Error al obtener la lista de usuarios de la base de datos: ");
         } finally {
             ConexionBD.cerrar();
         }
@@ -79,7 +79,7 @@ public class traspasoDAO {
             return true;
             
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error al modificar la contrasena en la base de datos: " + e.toString());
+            JOptionPane.showMessageDialog(null, "Error al modificar la contrasena en la base de datos: " );
             return false;
         } finally {
             ConexionBD.cerrar();
@@ -99,7 +99,7 @@ public class traspasoDAO {
             return true;
             
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error al eliminar el usuario de la base de datos: " + e.toString());
+            JOptionPane.showMessageDialog(null, "Error al eliminar el usuario de la base de datos: " );
             return false;
         } finally {
             ConexionBD.cerrar();
