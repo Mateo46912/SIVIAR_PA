@@ -4,19 +4,74 @@
  */
 package Vista;
 
+import javax.swing.JPasswordField;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import Controlador.ControladorS;
+import Modelo.DatosUsuario;
+import Modelo.traspasoDAO;
+
 /**
  *
  * @author Erick
  */
 public class VentanaGeneralP extends javax.swing.JFrame {
 
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaGeneralP.class.getName());
+    private ControladorS controlador;
+    private traspasoDAO instruccionesDAO;
+    private DatosUsuario usuarioUsado;
+
     /**
      * Creates new form VentanaGeneralP
      */
-    public VentanaGeneralP() {
+    public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) {
+        this.instruccionesDAO = instruccionesDAO;
+        this.usuarioUsado = usuarioUsado;
+        this.controlador = new ControladorS(this, instruccionesDAO, usuarioUsado);
         initComponents();
+        this.setLocationRelativeTo(null);
+        this.setName("S.I.V.A.R");
+        this.setResizable(false);
     }
+
+
+     public JTable getTblUsuarios() {
+        return tblUsuarios;
+    }
+
+    public void setTblUsuarios(JTable tblUsuarios) {
+        this.tblUsuarios = tblUsuarios;
+    }
+
+    public JPasswordField getTxtContrasena() {
+        return txtContrasena;
+    }
+
+    public void setTxtContrasena(JPasswordField txtContrasena) {
+        this.txtContrasena = txtContrasena;
+    }
+
+    public JTextField getTxtID() {
+        return txtID;
+    }
+
+    public void setTxtID(JTextField txtID) {
+        this.txtID = txtID;
+    }
+
+    public JTextField getTxtNombre() {
+        return txtNombre;
+    }
+
+    public void setTxtNombre(JTextField txtNombre) {
+        this.txtNombre = txtNombre;
+    }
+
+
+
+
+
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -53,6 +108,7 @@ public class VentanaGeneralP extends javax.swing.JFrame {
         jLabel5 = new javax.swing.JLabel();
         txtHoraFin = new javax.swing.JFormattedTextField();
         txtHoraInicio = new javax.swing.JFormattedTextField();
+        btnGraficarResultados = new javax.swing.JButton();
         jPanel3 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         boxPuertosArduino = new javax.swing.JComboBox<>();
@@ -88,14 +144,34 @@ public class VentanaGeneralP extends javax.swing.JFrame {
 
         btnNuevoUsuario.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         btnNuevoUsuario.setText("Guardar Nuevo Usuario");
+        btnNuevoUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnNuevoUsuarioActionPerformed(evt);
+            }
+        });
 
         btnCambiarContrasena.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         btnCambiarContrasena.setText("Modificar Contraseña");
+        btnCambiarContrasena.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCambiarContrasenaActionPerformed(evt);
+            }
+        });
 
         btnEliminarUsuario.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         btnEliminarUsuario.setText("Eliminar Usuario");
+        btnEliminarUsuario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarUsuarioActionPerformed(evt);
+            }
+        });
 
         txtContrasena.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtContrasena.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtContrasenaActionPerformed(evt);
+            }
+        });
         txtContrasena.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtContrasenaKeyTyped(evt);
@@ -237,6 +313,11 @@ public class VentanaGeneralP extends javax.swing.JFrame {
         });
 
         btnFiltrarFecha.setText("Buscar Por Fecha");
+        btnFiltrarFecha.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnFiltrarFechaActionPerformed(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel3.setText("Fecha de fin:");
@@ -265,6 +346,11 @@ public class VentanaGeneralP extends javax.swing.JFrame {
             ex.printStackTrace();
         }
         txtHoraFin.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtHoraFin.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtHoraFinActionPerformed(evt);
+            }
+        });
         txtHoraFin.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtHoraFinKeyTyped(evt);
@@ -277,11 +363,18 @@ public class VentanaGeneralP extends javax.swing.JFrame {
             ex.printStackTrace();
         }
         txtHoraInicio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtHoraInicio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtHoraInicioActionPerformed(evt);
+            }
+        });
         txtHoraInicio.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtHoraInicioKeyTyped(evt);
             }
         });
+
+        btnGraficarResultados.setText("Graficar Resultados");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -305,9 +398,11 @@ public class VentanaGeneralP extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtHoraInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtHoraFin, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
-                .addComponent(btnFiltrarFecha)
-                .addGap(27, 27, 27))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnGraficarResultados)
+                    .addComponent(btnFiltrarFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -320,7 +415,13 @@ public class VentanaGeneralP extends javax.swing.JFrame {
                             .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtHoraInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(4, 4, 4)
+                        .addGap(4, 4, 4))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(btnFiltrarFecha)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtFechaFin, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -328,9 +429,8 @@ public class VentanaGeneralP extends javax.swing.JFrame {
                             .addComponent(txtHoraFin, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(21, 21, 21))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnFiltrarFecha)
-                        .addGap(28, 28, 28)))
+                        .addComponent(btnGraficarResultados)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -341,6 +441,11 @@ public class VentanaGeneralP extends javax.swing.JFrame {
         jLabel2.setText("Seleccionar Puerto COM:");
 
         boxPuertosArduino.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "COM1", "COM2", "COM3", "COM4", "COM5" }));
+        boxPuertosArduino.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                boxPuertosArduinoActionPerformed(evt);
+            }
+        });
 
         btnConectarArduino.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         btnConectarArduino.setText("CONECTAR ARDUINO");
@@ -437,30 +542,48 @@ public class VentanaGeneralP extends javax.swing.JFrame {
         // TODO add your handling code here:
     }                                      
 
+    private void txtContrasenaActionPerformed(java.awt.event.ActionEvent evt) {                                              
+        // TODO add your handling code here:
+    }                                             
+
+    private void btnNuevoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {                                                
+        controlador.guardarNuevoUsuario();
+    }                                               
+
+    private void btnCambiarContrasenaActionPerformed(java.awt.event.ActionEvent evt) {                                                     
+        controlador.modificarContraseña();
+    }                                                    
+
+    private void btnEliminarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {                                                   
+        controlador.eliminarUsuario();
+    }                                                  
+
+    private void txtHoraInicioActionPerformed(java.awt.event.ActionEvent evt) {                                              
+        // TODO add your handling code here:
+    }                                             
+
+    private void txtHoraFinActionPerformed(java.awt.event.ActionEvent evt) {                                           
+        // TODO add your handling code here:
+    }                                          
+
+    private void btnFiltrarFechaActionPerformed(java.awt.event.ActionEvent evt) {                                                
+        // TODO add your handling code here:
+    }                                               
+
+    private void boxPuertosArduinoActionPerformed(java.awt.event.ActionEvent evt) {                                                  
+        // TODO add your handling code here:
+    }  
+    
+    private void tblUsuariosMouseClicked(java.awt.event.MouseEvent evt) {                                         
+        txtContrasena.setEditable(false);
+        txtNombre.setEditable(false);
+        txtID.setEditable(false);
+        controlador.seleccionarUsuarioDeTabla();    
+    }
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new VentanaGeneralP().setVisible(true));
-    }
 
     // Variables declaration - do not modify                     
     private javax.swing.JComboBox<String> boxPuertosArduino;
@@ -468,6 +591,7 @@ public class VentanaGeneralP extends javax.swing.JFrame {
     private javax.swing.JButton btnConectarArduino;
     private javax.swing.JButton btnEliminarUsuario;
     private javax.swing.JButton btnFiltrarFecha;
+    private javax.swing.JButton btnGraficarResultados;
     private javax.swing.JButton btnNuevoUsuario;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -496,4 +620,5 @@ public class VentanaGeneralP extends javax.swing.JFrame {
     private javax.swing.JTextField txtID;
     private javax.swing.JTextField txtNombre;
     // End of variables declaration                   
+
 }
