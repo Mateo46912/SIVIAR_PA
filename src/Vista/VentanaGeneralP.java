@@ -4,6 +4,7 @@
  */
 package Vista;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -40,23 +41,24 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
                 tblUsuariosMouseClicked(evt);
             }
         });
+        
+        javax.swing.table.DefaultTableCellRenderer passwordRenderer = new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            protected void setValue(Object value) {
+                String contrasenaActual = (value != null) ? value.toString() : "";
+                String ocultarPass = "";
+                for (int i = 0; i < contrasenaActual.length(); i++) {
+                    ocultarPass += "•";
+                }
+                super.setValue(ocultarPass);
+            }
+        };
+        
         javax.swing.table.DefaultTableCellRenderer centerRenderer = new javax.swing.table.DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(javax.swing.JLabel.CENTER);
 
         tblUsuarios.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
         tblUsuarios.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
-
-        javax.swing.table.DefaultTableCellRenderer passwordRenderer = new javax.swing.table.DefaultTableCellRenderer() {
-            @Override
-            protected void setValue(Object value) {
-                String passwordReal = (value != null) ? value.toString() : "";
-                String mascara = "";
-                for (int i = 0; i < passwordReal.length(); i++) {
-                    mascara += "•";
-                }
-                super.setValue(mascara);
-            }
-        };
         
         passwordRenderer.setHorizontalAlignment(javax.swing.JLabel.CENTER);
         tblUsuarios.getColumnModel().getColumn(2).setCellRenderer(passwordRenderer);
@@ -576,8 +578,7 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
 
     private void btnNuevoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {    
         txtContrasena.setEditable(true);
-        txtNombre.setEditable(true);
-        txtID.setEditable(true);                                            
+        txtNombre.setEditable(true);                                          
         controlador.guardarNuevoUsuario();
     }                                               
 
@@ -608,16 +609,8 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
     private void tblUsuariosMouseClicked(java.awt.event.MouseEvent evt) {                                         
         txtContrasena.setEditable(false);
         txtNombre.setEditable(false);
-        txtID.setEditable(false);
         controlador.seleccionarUsuarioDeTabla();    
-        
-
-    
-
-
     }
-
-    
 
     /**
      * @param args the command line arguments

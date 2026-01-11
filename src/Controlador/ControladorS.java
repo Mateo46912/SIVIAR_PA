@@ -1,10 +1,13 @@
 package Controlador;
 
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
+import BaseDeDatos.ConexionBD;
 import Modelo.DatosUsuario;
 import Modelo.traspasoDAO;
 import Vista.VentanaGeneralP;
@@ -38,8 +41,9 @@ public class ControladorS {
         usuarioUsado.setContrasena(contrasenaUsuario);
 
         if(instruccionesDAO.registrarUsuario(usuarioUsado)){
-            JOptionPane.showMessageDialog(null, "Se ingreso correctamente al usuario.");
+            JOptionPane.showMessageDialog(null, "Se agrego correctamente al usuario.");
             mostrarUsuariosTabla();
+            JOptionPane.showMessageDialog(null, "Se le asigno el ID: " + usuarioUsado.getId()+"\n"+"Recueredelo lo usara como clave de acceso");
             ventanaGeneral.getTxtNombre().setText("");
             ventanaGeneral.getTxtContrasena().setText("");
         } else {
@@ -147,5 +151,7 @@ public class ControladorS {
             ventanaGeneral.getTxtContrasena().setText(ventanaGeneral.getTblUsuarios().getValueAt(filaSeleccionada, 2).toString());
         }
     }
+
+    
     
 }

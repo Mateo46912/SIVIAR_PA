@@ -1,10 +1,8 @@
 package Modelo;
 
 import BaseDeDatos.ConexionBD;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -17,18 +15,27 @@ public class traspasoDAO {
     
     public boolean registrarUsuario(DatosUsuario usuario) {
 
-        String sql = "INSERT INTO usuarios (nombre, contrasena) VALUES (?, ?)";
+        String peticionSql = "INSERT INTO usuarios (nombre, contrasena) VALUES (?, ?)";
         
         try {
             conexionBD = ConexionBD.conectar();
 
-            prepararConsulta = conexionBD.prepareStatement(sql);
+            prepararConsulta = conexionBD.prepareStatement(peticionSql, Statement.RETURN_GENERATED_KEYS);
             
             prepararConsulta.setString(1, usuario.getNombreU());   
             prepararConsulta.setString(2, usuario.getContrasena()); 
             
-            prepararConsulta.execute();
-            return true; 
+            int filasPedir = prepararConsulta.executeUpdate();
+            
+            if (filasPedir > 0) {
+                ResultSet idObtenido = prepararConsulta.getGeneratedKeys();
+                if (idObtenido.next()) {
+                    int idGenerado = idObtenido.getInt(1);
+                    usuario.setId(idGenerado);
+                    return true;
+                }
+            }
+            return false; 
             
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "Erro al registrar el usuario en la base de datos: ");
@@ -40,11 +47,11 @@ public class traspasoDAO {
     
     public List<DatosUsuario> listarUsuarios() {
         List<DatosUsuario> listaUsuariosBD = new ArrayList<>();
-        String sql = "SELECT * FROM usuarios";
+        String peticionSql = "SELECT * FROM usuarios";
         
         try {
             conexionBD = ConexionBD.conectar();
-            prepararConsulta = conexionBD.prepareStatement(sql);
+            prepararConsulta = conexionBD.prepareStatement(peticionSql);
             recibirConsulta = prepararConsulta.executeQuery(); 
             
             while (recibirConsulta.next()) {
@@ -66,11 +73,11 @@ public class traspasoDAO {
     }
 
     public boolean modificarUsuario(DatosUsuario usuario) {
-        String sql = "UPDATE usuarios SET contrasena = ? WHERE id = ?";
+        String peticionSql = "UPDATE usuarios SET contrasena = ? WHERE id = ?";
         
         try {
             conexionBD = ConexionBD.conectar();
-            prepararConsulta = conexionBD.prepareStatement(sql);
+            prepararConsulta = conexionBD.prepareStatement(peticionSql);
             
             prepararConsulta.setString(1, usuario.getContrasena()); 
             prepararConsulta.setInt(2, usuario.getId());           
@@ -87,11 +94,11 @@ public class traspasoDAO {
     }
     
     public boolean eliminarUsuario(int id) {
-        String sql = "DELETE FROM usuarios WHERE id = ?";
+        String peticionSql = "DELETE FROM usuarios WHERE id = ?";
         
         try {
             conexionBD = ConexionBD.conectar();
-            prepararConsulta = conexionBD.prepareStatement(sql);
+            prepararConsulta = conexionBD.prepareStatement(peticionSql);
             
             prepararConsulta.setInt(1, id); 
             
@@ -104,5 +111,64 @@ public class traspasoDAO {
         } finally {
             ConexionBD.cerrar();
         }
+    }
+
+    public boolean registrarIntentoLog(DatosLogs logAct) {
+        String peticionSql = "INSERT INTO registros_acceso (id_usuario, nombre_usuario, fecha, hora, estado, intentos) VALUES (?, ?, CURDATE(), CURTIME(), ?, ?)";
+        
+        try {
+            conexionBD = ConexionBD.conectar();
+            prepararConsulta = conexionBD.prepareStatement(peticionSql);
+            
+            prepararConsulta.setInt(1, logAct.getIdUsuario());
+            prepararConsulta.setString(2, logAct.getNombreUsuario());
+            prepararConsulta.setString(3, logAct.getEstadoLog());
+            prepararConsulta.setInt(4, logAct.getIntentoAct());            
+            prepararConsulta.execute();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Error al registrar el intento de log en la base de datos" );
+            return false;
+        } finally {
+            ConexionBD.cerrar();
+        }
+    }
+
+    public List<DatosLogs> filtrarLogs(String fechaIni, String horaIni, String fechaFin, String horaFin) {
+        List<DatosLogs> listaLogsFiltrada = new ArrayList<>();
+        
+        String peticionSql = "SELECT * FROM registros_acceso WHERE TIMESTAMP(fecha, hora) " +
+                     "BETWEEN TIMESTAMP(?, ?) AND TIMESTAMP(?, ?) " +
+                     "ORDER BY fecha DESC, hora DESC";
+        
+        try {
+            conexionBD = ConexionBD.conectar();
+            prepararConsulta = conexionBD.prepareStatement(peticionSql);
+
+            prepararConsulta.setString(1, fechaIni);
+            prepararConsulta.setString(2, horaIni);
+            prepararConsulta.setString(3, fechaFin);
+            prepararConsulta.setString(4, horaFin);
+            
+            recibirConsulta = prepararConsulta.executeQuery();
+            
+            while (recibirConsulta.next()) {
+                DatosLogs logActual = new DatosLogs();
+                logActual.setIdLogActual(recibirConsulta.getInt("id_registro"));
+                logActual.setIdUsuario(recibirConsulta.getInt("id_usuario"));
+                logActual.setNombreUsuario(recibirConsulta.getString("nombre_usuario"));
+                logActual.setFechaLog(recibirConsulta.getString("fecha"));
+                logActual.setHoraLog(recibirConsulta.getString("hora"));
+                logActual.setEstadoLog(recibirConsulta.getString("estado"));
+                logActual.setIntentoAct(recibirConsulta.getInt("intentos"));
+                
+                listaLogsFiltrada.add(logActual);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Error al filtrar logs: " + e.toString());
+        } finally {
+            ConexionBD.cerrar();
+        }
+        return listaLogsFiltrada;
     }
 }
