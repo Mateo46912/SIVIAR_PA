@@ -134,7 +134,7 @@ public class traspasoDAO {
         }
     }
 
-    public List<DatosLogs> filtrarLogs(String fechaIni, String horaIni, String fechaFin, String horaFin) {
+    public List<DatosLogs> filtrarListadoLogs(String fechaIni, String horaIni, String fechaFin, String horaFin) {
         List<DatosLogs> listaLogsFiltrada = new ArrayList<>();
         
         String peticionSql = "SELECT * FROM registros_acceso WHERE TIMESTAMP(fecha, hora) " +

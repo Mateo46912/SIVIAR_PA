@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 import BaseDeDatos.ConexionBD;
-import Modelo.DatosUsuario;
+import Modelo.*;
 import Modelo.traspasoDAO;
 import Vista.VentanaGeneralP;
 
@@ -26,7 +26,7 @@ public class ControladorS {
         mostrarUsuariosTabla();
     }
    
-
+    //Registros (Pestaña 1)
     public void guardarNuevoUsuario() {
          
         String nombreUsuario = ventanaGeneral.getTxtNombre().getText();
@@ -150,6 +150,54 @@ public class ControladorS {
             ventanaGeneral.getTxtNombre().setText(ventanaGeneral.getTblUsuarios().getValueAt(filaSeleccionada, 1).toString());
             ventanaGeneral.getTxtContrasena().setText(ventanaGeneral.getTblUsuarios().getValueAt(filaSeleccionada, 2).toString());
         }
+    }
+
+    //LOGS(Pestaña 2)
+
+    public void filtraListadoLogsPorFecha() {
+
+        String fechaDeInicio = ventanaGeneral.getTxtFechaInicio().getText();
+        String horaDeInicio = ventanaGeneral.getTxtHoraInicio().getText();
+        String fechaDeFin = ventanaGeneral.getTxtFechaFin().getText();
+        String horaDeFin = ventanaGeneral.getTxtHoraFin().getText();
+        
+        if (fechaDeInicio.trim().length() < 10 || fechaDeFin.trim().length() < 10) {
+            JOptionPane.showMessageDialog(null, "Por favor ingrese las fechas completa sin espacios en blanco (AAAA-MM-DD)");
+            return;
+        }
+        
+        if (horaDeInicio.trim().length() < 5){
+            horaDeInicio = "00:00:00";
+        }else{
+            horaDeInicio = horaDeInicio + ":00";
+        } 
+        
+        if (horaDeFin.trim().length() < 5){
+            horaDeFin = "23:59:59";
+        } else{
+            horaDeFin = horaDeFin + ":00";
+        }
+
+        List<DatosLogs> listaFiltrada = instruccionesDAO.filtrarListadoLogs(fechaDeInicio, horaDeInicio, fechaDeFin, horaDeFin);
+        
+        DefaultTableModel tablaLogsFiltrados = (DefaultTableModel) ventanaGeneral.getTblDatosLogs().getModel();
+        tablaLogsFiltrados.setRowCount(0);
+        
+        if (listaFiltrada.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No se encontraron intentos de registro en el rango de fechas seleccionado.");
+        } else {
+            Object[] fila = new Object[6];
+            for (DatosLogs log : listaFiltrada) {
+                fila[0] = log.getIdUsuario();
+                fila[1] = log.getNombreUsuario();
+                fila[2] = log.getFechaLog();
+                fila[3] = log.getHoraLog();
+                fila[4] = log.getIntentoAct();
+                fila[5] = log.getEstadoLog();
+                tablaLogsFiltrados.addRow(fila);
+            }
+        }
+        ventanaGeneral.getTblDatosLogs().setModel(tablaLogsFiltrados);
     }
 
     

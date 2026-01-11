@@ -4,7 +4,7 @@
  */
 package Vista;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.swing.JPasswordField;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -97,7 +97,28 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
         this.txtNombre = txtNombre;
     }
 
+     public JFormattedTextField getTxtFechaFin() {
+        return txtFechaFin;
+    }
 
+
+    public JFormattedTextField getTxtFechaInicio() {
+        return txtFechaInicio;
+    }
+
+
+    public JFormattedTextField getTxtHoraFin() {
+        return txtHoraFin;
+    }
+
+
+    public JFormattedTextField getTxtHoraInicio() {
+        return txtHoraInicio;
+    }
+
+    public JTable getTblDatosLogs() {
+        return tblDatosLogs;
+    }
 
 
 
@@ -599,7 +620,7 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
     }                                          
 
     private void btnFiltrarFechaActionPerformed(java.awt.event.ActionEvent evt) {                                                
-        // TODO add your handling code here:
+        controlador.filtraListadoLogsPorFecha();
     }                                               
 
     private void boxPuertosArduinoActionPerformed(java.awt.event.ActionEvent evt) {                                                  
@@ -651,5 +672,4 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
     private javax.swing.JTextField txtID;
     private javax.swing.JTextField txtNombre;
     // End of variables declaration                   
-
 }
