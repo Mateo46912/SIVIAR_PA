@@ -5,9 +5,7 @@
 package Vista;
 
 import javax.swing.*;
-import javax.swing.JPasswordField;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+
 import Controlador.ControladorS;
 import Modelo.DatosUsuario;
 import Modelo.traspasoDAO;
@@ -26,16 +24,22 @@ public class VentanaGeneralP extends javax.swing.JFrame {
      * Creates new form VentanaGeneralP
      */
 public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) {
+
+        initComponents();   
         this.instruccionesDAO = instruccionesDAO;
         this.usuarioUsado = usuarioUsado;
-        
-        initComponents();   
         
         this.controlador = new ControladorS(this, instruccionesDAO, usuarioUsado);
         this.setLocationRelativeTo(null);
         this.setName("S.I.V.A.R");
         this.setResizable(false);
         
+        boxPuertosArduino.removeAllItems();
+        String[] puertos = controlador.obtenerPuertosDisponibles();
+        for (String puerto : puertos) {
+            boxPuertosArduino.addItem(puerto);
+        }
+
         tblUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblUsuariosMouseClicked(evt);
@@ -54,6 +58,7 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
             }
         };
         
+        
         javax.swing.table.DefaultTableCellRenderer centerRenderer = new javax.swing.table.DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(javax.swing.JLabel.CENTER);
 
@@ -62,6 +67,8 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
         
         passwordRenderer.setHorizontalAlignment(javax.swing.JLabel.CENTER);
         tblUsuarios.getColumnModel().getColumn(2).setCellRenderer(passwordRenderer);
+
+        
     }
 
 
@@ -575,7 +582,22 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
     }                                      
 
     private void btnConectarArduinoActionPerformed(java.awt.event.ActionEvent evt) {                                                   
-        // TODO add your handling code here:
+        if (boxPuertosArduino.getItemCount() > 0) {
+            String puertoSeleccionado = boxPuertosArduino.getSelectedItem().toString();
+            
+            if (controlador.conectarArduino(puertoSeleccionado)) {
+                javax.swing.JOptionPane.showMessageDialog(this, "¡Conexión Exitosa con Arduino en " + puertoSeleccionado + "!");
+                btnConectarArduino.setText("CONECTADO");
+                btnConectarArduino.setEnabled(false); // Bloqueamos para no reconectar
+                
+                jTextArea1.append("Sistema S.I.V.A.R conectado en " + puertoSeleccionado + "\n");
+                jTextArea1.append("Esperando ingreso de ID en el teclado matricial...\n");
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Error: No se pudo conectar al puerto. Verifique el cable.");
+            }
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, "No se detectaron puertos COM. Conecte el Arduino.");
+        }
     }                                                  
 
     private void txtFechaFinActionPerformed(java.awt.event.ActionEvent evt) {                                            

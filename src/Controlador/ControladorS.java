@@ -9,20 +9,21 @@ import javax.swing.table.DefaultTableModel;
 
 import BaseDeDatos.ConexionBD;
 import Modelo.*;
-import Modelo.traspasoDAO;
 import Vista.VentanaGeneralP;
+import Arduino.ArduinoService;
 
 public class ControladorS {
     
     private VentanaGeneralP ventanaGeneral;
     private traspasoDAO instruccionesDAO;
     private DatosUsuario usuarioUsado;
+    private ArduinoService arduinoService;
 
     public ControladorS(VentanaGeneralP ventanaGeneral, traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) {
         this.ventanaGeneral = ventanaGeneral;
         this.instruccionesDAO = instruccionesDAO;
         this.usuarioUsado = usuarioUsado;
-
+        this.arduinoService = new ArduinoService(instruccionesDAO);
         mostrarUsuariosTabla();
     }
    
@@ -153,7 +154,6 @@ public class ControladorS {
     }
 
     //LOGS(Pestaña 2)
-
     public void filtraListadoLogsPorFecha() {
 
         String fechaDeInicio = ventanaGeneral.getTxtFechaInicio().getText();
@@ -198,6 +198,14 @@ public class ControladorS {
             }
         }
         ventanaGeneral.getTblDatosLogs().setModel(tablaLogsFiltrados);
+    }
+
+    public String[] obtenerPuertosDisponibles() {
+        return arduinoService.obtenerPuertos();
+    }
+
+    public boolean conectarArduino(String puerto) {
+        return arduinoService.conectar(puerto);
     }
 
     
