@@ -1,4 +1,3 @@
-
 package Arduino;
 
 import com.fazecast.jSerialComm.SerialPort;

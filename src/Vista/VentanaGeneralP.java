@@ -172,7 +172,7 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
         boxPuertosArduino = new javax.swing.JComboBox<>();
         btnConectarArduino = new javax.swing.JButton();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        txtAreaArduino = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -513,10 +513,10 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
             }
         });
 
-        jTextArea1.setEditable(false);
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane3.setViewportView(jTextArea1);
+        txtAreaArduino.setEditable(false);
+        txtAreaArduino.setColumns(20);
+        txtAreaArduino.setRows(5);
+        jScrollPane3.setViewportView(txtAreaArduino);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -588,10 +588,10 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
             if (controlador.conectarArduino(puertoSeleccionado)) {
                 javax.swing.JOptionPane.showMessageDialog(this, "¡Conexión Exitosa con Arduino en " + puertoSeleccionado + "!");
                 btnConectarArduino.setText("CONECTADO");
-                btnConectarArduino.setEnabled(false); // Bloqueamos para no reconectar
+                btnConectarArduino.setEnabled(false);
                 
-                jTextArea1.append("Sistema S.I.V.A.R conectado en " + puertoSeleccionado + "\n");
-                jTextArea1.append("Esperando ingreso de ID en el teclado matricial...\n");
+                txtAreaArduino.append("Sistema S.I.V.A.R conectado en " + puertoSeleccionado + "\n");
+                txtAreaArduino.append("Esperando ingreso de ID en el teclado matricial...\n");
             } else {
                 javax.swing.JOptionPane.showMessageDialog(this, "Error: No se pudo conectar al puerto. Verifique el cable.");
             }
@@ -679,7 +679,7 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTextArea jTextArea1;
+    private javax.swing.JTextArea txtAreaArduino;
     private javax.swing.JLabel lblContra;
     private javax.swing.JLabel lblID;
     private javax.swing.JLabel lblNombre;
