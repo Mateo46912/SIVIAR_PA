@@ -8,8 +8,8 @@ public class App {
         
         traspasoDAO instruccionesDAO = new traspasoDAO();
         DatosUsuario usuarioUsado = new DatosUsuario();       
-        VentanaGeneralP vista = new VentanaGeneralP(instruccionesDAO, usuarioUsado);
-        vista.setVisible(true);
+        VentanaGeneralP ventana = new VentanaGeneralP(instruccionesDAO, usuarioUsado);
+        ventana.setVisible(true);
 
     }
 }

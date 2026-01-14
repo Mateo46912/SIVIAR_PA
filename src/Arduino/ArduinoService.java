@@ -11,15 +11,16 @@ import Modelo.DatosLogs;
 
 public class ArduinoService {
 
-    private SerialPort puertoSerial;
-    private traspasoDAO dao;
-    private int intentosFallidos = 0;
-    private int idUsuarioTemporal = 0; 
+    private SerialPort conexionSerialArduino;
+    private traspasoDAO DatosBdDao;
+    private int contadorFallidosContraseña = 0;
+    private int idLlegadaTemp = 0; 
+    
+    private StringBuilder guardarDatosArduino = new StringBuilder();
 
-    public ArduinoService(traspasoDAO dao) {
-        this.dao = dao;
+    public ArduinoService(traspasoDAO DatosBdDao) {
+        this.DatosBdDao = DatosBdDao;
     }
-
 
     public String[] obtenerPuertos() {
         SerialPort[] ports = SerialPort.getCommPorts();
@@ -30,12 +31,13 @@ public class ArduinoService {
         return nombres;
     }
 
-    public boolean conectar(String nombrePuerto) {
-        puertoSerial = SerialPort.getCommPort(nombrePuerto);
-        puertoSerial.setBaudRate(9600);
+    public boolean conectarArduino(String nombrePuerto) {
 
-        if (puertoSerial.openPort()) {
-            puertoSerial.addDataListener(new SerialPortDataListener() {
+        conexionSerialArduino = SerialPort.getCommPort(nombrePuerto);
+        conexionSerialArduino.setBaudRate(9600);
+
+        if (conexionSerialArduino.openPort()) {
+            conexionSerialArduino.addDataListener(new SerialPortDataListener() {
                 @Override
                 public int getListeningEvents() {
                     return SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
@@ -43,14 +45,20 @@ public class ArduinoService {
 
                 @Override
                 public void serialEvent(SerialPortEvent event) {
-                    if (event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE) return;
-                    
-                    byte[] buffer = new byte[puertoSerial.bytesAvailable()];
-                    puertoSerial.readBytes(buffer, buffer.length);
-                    String mensaje = new String(buffer).trim();
-                    
-                    if (mensaje.length() > 2) {
-                        procesarMensaje(mensaje);
+
+                    if (event.getEventType() != SerialPort.LISTENING_EVENT_DATA_AVAILABLE){
+                        return;
+                    }        
+                    try {
+                        byte[] buffer = new byte[conexionSerialArduino.bytesAvailable()];
+                        conexionSerialArduino.readBytes(buffer, buffer.length);
+                        
+                        String llegadaDatos = new String(buffer);
+                        guardarDatosArduino.append(llegadaDatos);
+
+                        validarMensajeCompletoA();
+                    } catch (Exception e) {
+                        System.out.println("Error al momento de leer los datos enviados por el arduino: " + e.getMessage());
                     }
                 }
             });
@@ -59,89 +67,115 @@ public class ArduinoService {
         return false;
     }
 
-    private void procesarMensaje(String mensaje) {
-        if (mensaje.startsWith("ID:")) {
-            try {
-                int idRecibido = Integer.parseInt(mensaje.substring(3));
-                verificarID(idRecibido);
-            } catch (NumberFormatException e) {
-                System.out.println("Error al leer ID");
-            }
-        }
-        else if (mensaje.startsWith("PASS:")) {
-            String passRecibida = mensaje.substring(5);
-            verificarContrasena(passRecibida);
-        }
-    }
 
-    private void verificarID(int id) {
-        List<DatosUsuario> usuarios = dao.listarUsuarios();
-        boolean encontrado = false;
+    private void validarMensajeCompletoA() {
 
-        for (DatosUsuario u : usuarios) {
-            if (u.getId() == id) {
-                encontrado = true;
-                break;
-            }
-        }
-
-        if (encontrado) {
-            idUsuarioTemporal = id;
-            intentosFallidos = 0;
-            enviarOrden("ID_OK");
-        } else {
-            enviarOrden("ID_ERROR");
-            registrarEnBaseDeDatos(id, "DESCONOCIDO", "FALLIDO - ID NO EXISTE", 1);
-        }
-    }
-
-    private void verificarContrasena(String passIngresada) {
-        String passReal = "";
-        String nombreUsuario = "DESCONOCIDO";
+        int verificarSaltoDeLinea = guardarDatosArduino.indexOf("\n");
         
-        List<DatosUsuario> usuarios = dao.listarUsuarios();
-        for (DatosUsuario u : usuarios) {
-            if (u.getId() == idUsuarioTemporal) {
-                passReal = u.getContrasena();
-                nombreUsuario = u.getNombreU();
+        while (verificarSaltoDeLinea != -1) {
+            String mensajeCompleto = guardarDatosArduino.substring(0, verificarSaltoDeLinea).trim();
+            if (!mensajeCompleto.isEmpty()) {
+                procesarTipoMensaje(mensajeCompleto);
+            }
+            guardarDatosArduino.delete(0, verificarSaltoDeLinea + 1);            
+            verificarSaltoDeLinea = guardarDatosArduino.indexOf("\n");
+        }
+    }
+
+    private void procesarTipoMensaje(String mensajeLlegada) {
+        try {
+            if (mensajeLlegada.startsWith("ID:")) {
+                
+                String separarID = mensajeLlegada.substring(3).replaceAll("[^0-9]", "");
+                
+                if (!separarID.isEmpty()) {
+                    int idRecibido = Integer.parseInt(separarID);
+                    verificarIDLlegada(idRecibido);
+                }
+            }
+            else if (mensajeLlegada.startsWith("PASS:")) {
+                String separarContrasena = mensajeLlegada.substring(5).replaceAll("[^0-9]", "");
+                
+                if (!separarContrasena.isEmpty()) {
+                    verificarContrasenaLlegada(separarContrasena);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error procesando el tipo de mensaje que envia el arduino: " + e.getMessage());
+        }
+    }
+
+   private void verificarIDLlegada(int idRecibido) {
+
+        List<DatosUsuario> usuariosRegistradosBD = DatosBdDao.listarUsuarios();
+        boolean usuarioEncontradoBD = false;
+
+        for (DatosUsuario usuarioRegistrado : usuariosRegistradosBD) {
+            if (usuarioRegistrado.getId() == idRecibido) {
+                usuarioEncontradoBD = true;
                 break;
             }
         }
 
-        if (passReal.equals(passIngresada)) {
-            enviarOrden("ACCESO_CONCEDIDO");
-            registrarEnBaseDeDatos(idUsuarioTemporal, nombreUsuario, "EXITOSO", intentosFallidos);
-            
-            intentosFallidos = 0;
-            idUsuarioTemporal = 0;
+        if (usuarioEncontradoBD) {
+            idLlegadaTemp = idRecibido;
+            contadorFallidosContraseña = 0;
+            DarOrdenArduino("ID_OK");
+            System.out.println("Se encontró el ID en la base de datos: " + idRecibido);
         } else {
-            intentosFallidos++;
-            
-            if (intentosFallidos >= 3) {
-                enviarOrden("BLOQUEO");
-                registrarEnBaseDeDatos(idUsuarioTemporal, nombreUsuario, "BLOQUEADO", intentosFallidos);
-                intentosFallidos = 0;
+            DarOrdenArduino("ID_ERROR");            
+            registrarEnBaseDeDatos(0, "Desconocido", "Fallido", 1);          
+            System.out.println("No se encontró el ID en la base de datos: " + idRecibido);
+        }
+    }
+
+    private void verificarContrasenaLlegada(String contrasenaRecibida) {
+
+        String contrasenaRealRegistrada = "";
+        String nombreUsuario = "Desconocido";
+        
+        List<DatosUsuario> usuariosRegistradosBD = DatosBdDao.listarUsuarios();
+
+        for (DatosUsuario usuarioRegistrado : usuariosRegistradosBD) {
+            if (usuarioRegistrado.getId() == idLlegadaTemp) {
+                contrasenaRealRegistrada = usuarioRegistrado.getContrasena();
+                nombreUsuario = usuarioRegistrado.getNombreU();
+                break;
+            }
+        }
+
+        if (contrasenaRealRegistrada.equals(contrasenaRecibida)) {
+            DarOrdenArduino("ACCESO_CONCEDIDO");
+            registrarEnBaseDeDatos(idLlegadaTemp, nombreUsuario, "Exitoso", contadorFallidosContraseña + 1);
+            contadorFallidosContraseña = 0;
+            idLlegadaTemp = 0;
+        } else {
+            contadorFallidosContraseña++;
+            if (contadorFallidosContraseña >= 3) {
+                DarOrdenArduino("BLOQUEO");
+                registrarEnBaseDeDatos(idLlegadaTemp, nombreUsuario, "Bloqueado", contadorFallidosContraseña);
+                contadorFallidosContraseña = 0;
             } else {
-                enviarOrden("PASS_ERROR");
-                registrarEnBaseDeDatos(idUsuarioTemporal, nombreUsuario, "FALLIDO - PASS INCORRECTA", intentosFallidos);
+                DarOrdenArduino("PASS_ERROR");
+                registrarEnBaseDeDatos(idLlegadaTemp, nombreUsuario, "Fallido", contadorFallidosContraseña);
             }
         }
     }
-    private void registrarEnBaseDeDatos(int id, String nombre, String estado, int intentos) {
-        DatosLogs nuevoLog = new DatosLogs();
-        
-        nuevoLog.setIdUsuario(id);
-        nuevoLog.setNombreUsuario(nombre);
-        nuevoLog.setEstadoLog(estado); 
-        nuevoLog.setIntentoAct(intentos); 
-        dao.registrarIntentoLog(nuevoLog);
+
+    private void registrarEnBaseDeDatos(int idU, String nombreU, String estadoLog, int contadorIntentos) {
+        DatosLogs logNuevo = new DatosLogs();
+        logNuevo.setIdUsuario(idU);
+        logNuevo.setNombreUsuario(nombreU);
+        logNuevo.setEstadoLog(estadoLog); 
+        logNuevo.setIntentoAct(contadorIntentos); 
+        DatosBdDao.registrarIntentoLog(logNuevo);
     }
 
-    private void enviarOrden(String orden) {
-        if (puertoSerial != null && puertoSerial.isOpen()) {
-            PrintWriter output = new PrintWriter(puertoSerial.getOutputStream());
-            output.print(orden + "\n");
-            output.flush();
+    private void DarOrdenArduino(String ordenA) {
+        if (conexionSerialArduino != null && conexionSerialArduino.isOpen()) {
+            PrintWriter salidaArduino = new PrintWriter(conexionSerialArduino.getOutputStream());
+            salidaArduino.print(ordenA + "\n");
+            salidaArduino.flush();
         }
     }
 }

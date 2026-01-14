@@ -178,23 +178,23 @@ public class ControladorS {
             horaDeFin = horaDeFin + ":00";
         }
 
-        List<DatosLogs> listaFiltrada = instruccionesDAO.filtrarListadoLogs(fechaDeInicio, horaDeInicio, fechaDeFin, horaDeFin);
+        List<DatosLogs> listaLogsFiltrada = instruccionesDAO.filtrarListadoLogs(fechaDeInicio, horaDeInicio, fechaDeFin, horaDeFin);
         
         DefaultTableModel tablaLogsFiltrados = (DefaultTableModel) ventanaGeneral.getTblDatosLogs().getModel();
         tablaLogsFiltrados.setRowCount(0);
         
-        if (listaFiltrada.isEmpty()) {
+        if (listaLogsFiltrada.isEmpty()) {
             JOptionPane.showMessageDialog(null, "No se encontraron intentos de registro en el rango de fechas seleccionado.");
         } else {
-            Object[] fila = new Object[6];
-            for (DatosLogs log : listaFiltrada) {
-                fila[0] = log.getIdUsuario();
-                fila[1] = log.getNombreUsuario();
-                fila[2] = log.getFechaLog();
-                fila[3] = log.getHoraLog();
-                fila[4] = log.getIntentoAct();
-                fila[5] = log.getEstadoLog();
-                tablaLogsFiltrados.addRow(fila);
+            Object[] filaAct = new Object[6];
+            for (DatosLogs logFiltrado : listaLogsFiltrada) {
+                filaAct[0] = logFiltrado.getIdUsuario();
+                filaAct[1] = logFiltrado.getNombreUsuario();
+                filaAct[2] = logFiltrado.getFechaLog();
+                filaAct[3] = logFiltrado.getHoraLog();
+                filaAct[4] = logFiltrado.getIntentoAct();
+                filaAct[5] = logFiltrado.getEstadoLog();
+                tablaLogsFiltrados.addRow(filaAct);
             }
         }
         ventanaGeneral.getTblDatosLogs().setModel(tablaLogsFiltrados);
@@ -204,8 +204,8 @@ public class ControladorS {
         return arduinoService.obtenerPuertos();
     }
 
-    public boolean conectarArduino(String puerto) {
-        return arduinoService.conectar(puerto);
+    public boolean validarConexionArduino(String puerto) {
+        return arduinoService.conectarArduino(puerto);
     }
 
     

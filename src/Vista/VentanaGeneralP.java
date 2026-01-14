@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package Vista;
 
 import javax.swing.*;
@@ -12,7 +8,7 @@ import Modelo.traspasoDAO;
 
 /**
  *
- * @author Erick
+ * @author Mateo Cordero, Erick Bermeo
  */
 public class VentanaGeneralP extends javax.swing.JFrame {
 
@@ -36,7 +32,11 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
         
         boxPuertosArduino.removeAllItems();
         String[] puertos = controlador.obtenerPuertosDisponibles();
+        if (puertos.length == 0) {
+        boxPuertosArduino.addItem("Sin puertos disponibles");
+        }
         for (String puerto : puertos) {
+            
             boxPuertosArduino.addItem(puerto);
         }
 
@@ -57,8 +57,7 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
                 super.setValue(ocultarPass);
             }
         };
-        
-        
+               
         javax.swing.table.DefaultTableCellRenderer centerRenderer = new javax.swing.table.DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(javax.swing.JLabel.CENTER);
 
@@ -67,7 +66,6 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
         
         passwordRenderer.setHorizontalAlignment(javax.swing.JLabel.CENTER);
         tblUsuarios.getColumnModel().getColumn(2).setCellRenderer(passwordRenderer);
-
         
     }
 
@@ -583,20 +581,20 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
 
     private void btnConectarArduinoActionPerformed(java.awt.event.ActionEvent evt) {                                                   
         if (boxPuertosArduino.getItemCount() > 0) {
-            String puertoSeleccionado = boxPuertosArduino.getSelectedItem().toString();
+            String puertoAsignadoArduino = boxPuertosArduino.getSelectedItem().toString();
             
-            if (controlador.conectarArduino(puertoSeleccionado)) {
-                javax.swing.JOptionPane.showMessageDialog(this, "¡Conexión Exitosa con Arduino en " + puertoSeleccionado + "!");
-                btnConectarArduino.setText("CONECTADO");
+            if (controlador.validarConexionArduino(puertoAsignadoArduino)) {
+                javax.swing.JOptionPane.showMessageDialog(null, "El arduino se conectó correctamente en el puerto: " + puertoAsignadoArduino );
+                btnConectarArduino.setText("ARDUINO CONECTADO");
                 btnConectarArduino.setEnabled(false);
                 
-                txtAreaArduino.append("Sistema S.I.V.A.R conectado en " + puertoSeleccionado + "\n");
-                txtAreaArduino.append("Esperando ingreso de ID en el teclado matricial...\n");
+                txtAreaArduino.append("Sistema S.I.V.A.R conectado en " + puertoAsignadoArduino + "\n");
+                txtAreaArduino.append("Esperando ingreso de ID en el teclado matricial\n");
             } else {
-                javax.swing.JOptionPane.showMessageDialog(this, "Error: No se pudo conectar al puerto. Verifique el cable.");
+                javax.swing.JOptionPane.showMessageDialog(this, "No se pudo conectar al puerto de la computadora. Verifique el cable.");
             }
         } else {
-            javax.swing.JOptionPane.showMessageDialog(this, "No se detectaron puertos COM. Conecte el Arduino.");
+            javax.swing.JOptionPane.showMessageDialog(this, "No se detectaron puertos asignados al Arduino, Conectelo");
         }
     }                                                  
 
@@ -627,10 +625,14 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
 
     private void btnCambiarContrasenaActionPerformed(java.awt.event.ActionEvent evt) {                                                     
         controlador.modificarContraseña();
+        txtContrasena.setEditable(true);
+        txtNombre.setEditable(true);   
     }                                                    
 
     private void btnEliminarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {                                                   
         controlador.eliminarUsuario();
+        txtContrasena.setEditable(true);
+        txtNombre.setEditable(true);   
     }                                                  
 
     private void txtHoraInicioActionPerformed(java.awt.event.ActionEvent evt) {                                              
