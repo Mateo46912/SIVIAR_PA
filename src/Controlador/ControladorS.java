@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import BaseDeDatos.ConexionBD;
@@ -43,8 +44,11 @@ public class ControladorS {
 
         if(instruccionesDAO.registrarUsuario(usuarioUsado)){
             JOptionPane.showMessageDialog(null, "Se agrego correctamente al usuario.");
+            JTextField txtMostrarID = ventanaGeneral.getTxtID();
+            txtMostrarID.setText(String.valueOf(usuarioUsado.getId()));
             mostrarUsuariosTabla();
             JOptionPane.showMessageDialog(null, "Se le asigno el ID: " + usuarioUsado.getId()+"\n"+"Recueredelo lo usara como clave de acceso");
+            ventanaGeneral.getTxtID().setText("");
             ventanaGeneral.getTxtNombre().setText("");
             ventanaGeneral.getTxtContrasena().setText("");
         } else {
@@ -207,6 +211,27 @@ public class ControladorS {
     public boolean validarConexionArduino(String puerto) {
         return arduinoService.conectarArduino(puerto);
     }
+
+    public void graficarLogs() {
+        String fechaIni = ventanaGeneral.getTxtFechaInicio().getText();
+        String horaIni = ventanaGeneral.getTxtHoraInicio().getText();
+        String fechaFin = ventanaGeneral.getTxtFechaFin().getText();
+        String horaFin = ventanaGeneral.getTxtHoraFin().getText();
+
+        if (horaIni.trim().length() < 5) horaIni = "00:00:00";
+        else horaIni += ":00";
+        
+        if (horaFin.trim().length() < 5) horaFin = "23:59:59";
+        else horaFin += ":00";
+
+        List<DatosLogs> listaParaGrafica = instruccionesDAO.filtrarListadoLogs(fechaIni, horaIni, fechaFin, horaFin);
+
+        if (listaParaGrafica.isEmpty()) {
+            JOptionPane.showMessageDialog(ventanaGeneral, "No hay datos en el rango seleccionado para graficar.");
+            return;
+    }
+        new ControladorGrafica(listaParaGrafica);
+    }   
 
     
     

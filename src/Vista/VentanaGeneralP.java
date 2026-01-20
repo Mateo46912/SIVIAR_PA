@@ -1,42 +1,56 @@
 package Vista;
 
-import javax.swing.*;
-
 import Controlador.ControladorS;
 import Modelo.DatosUsuario;
 import Modelo.traspasoDAO;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 
-/**
- *
- * @author Mateo Cordero, Erick Bermeo
- */
 public class VentanaGeneralP extends javax.swing.JFrame {
 
     private ControladorS controlador;
     private traspasoDAO instruccionesDAO;
     private DatosUsuario usuarioUsado;
 
-    /**
-     * Creates new form VentanaGeneralP
-     */
-public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) {
-
-        initComponents();   
+    public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) {
+        initComponents();
         this.instruccionesDAO = instruccionesDAO;
         this.usuarioUsado = usuarioUsado;
-        
+
         this.controlador = new ControladorS(this, instruccionesDAO, usuarioUsado);
-        this.setLocationRelativeTo(null);
-        this.setName("S.I.V.A.R");
-        this.setResizable(false);
         
+        this.setTitle("Sistema - Panel General");
+        this.setResizable(false);
+
+        this.setSize(1000, 460); 
+        this.setLocationRelativeTo(null);
+
+        actualizarSiguienteID();
+
         boxPuertosArduino.removeAllItems();
         String[] puertos = controlador.obtenerPuertosDisponibles();
         if (puertos.length == 0) {
-        boxPuertosArduino.addItem("Sin puertos disponibles");
+            boxPuertosArduino.addItem("Sin puertos disponibles");
         }
         for (String puerto : puertos) {
-            
             boxPuertosArduino.addItem(puerto);
         }
 
@@ -45,97 +59,26 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
                 tblUsuariosMouseClicked(evt);
             }
         });
-        
-        javax.swing.table.DefaultTableCellRenderer passwordRenderer = new javax.swing.table.DefaultTableCellRenderer() {
-            @Override
-            protected void setValue(Object value) {
-                String contrasenaActual = (value != null) ? value.toString() : "";
-                String ocultarPass = "";
-                for (int i = 0; i < contrasenaActual.length(); i++) {
-                    ocultarPass += "•";
+    }
+
+    public void actualizarSiguienteID() {
+        int maxId = 0;
+        for (int i = 0; i < tblUsuarios.getRowCount(); i++) {
+            Object valor = tblUsuarios.getValueAt(i, 0);
+            if (valor != null) {
+                try {
+                    int id = Integer.parseInt(valor.toString());
+                    if (id > maxId) {
+                        maxId = id;
+                    }
+                } catch (NumberFormatException e) {
                 }
-                super.setValue(ocultarPass);
             }
-        };
-               
-        javax.swing.table.DefaultTableCellRenderer centerRenderer = new javax.swing.table.DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(javax.swing.JLabel.CENTER);
-
-        tblUsuarios.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
-        tblUsuarios.getColumnModel().getColumn(1).setCellRenderer(centerRenderer);
-        
-        passwordRenderer.setHorizontalAlignment(javax.swing.JLabel.CENTER);
-        tblUsuarios.getColumnModel().getColumn(2).setCellRenderer(passwordRenderer);
-        
+        }
+        txtID.setText(String.valueOf(maxId + 1));
     }
 
-
-     public JTable getTblUsuarios() {
-        return tblUsuarios;
-    }
-
-    public void setTblUsuarios(JTable tblUsuarios) {
-        this.tblUsuarios = tblUsuarios;
-    }
-
-    public JPasswordField getTxtContrasena() {
-        return txtContrasena;
-    }
-
-    public void setTxtContrasena(JPasswordField txtContrasena) {
-        this.txtContrasena = txtContrasena;
-    }
-
-    public JTextField getTxtID() {
-        return txtID;
-    }
-
-    public void setTxtID(JTextField txtID) {
-        this.txtID = txtID;
-    }
-
-    public JTextField getTxtNombre() {
-        return txtNombre;
-    }
-
-    public void setTxtNombre(JTextField txtNombre) {
-        this.txtNombre = txtNombre;
-    }
-
-     public JFormattedTextField getTxtFechaFin() {
-        return txtFechaFin;
-    }
-
-
-    public JFormattedTextField getTxtFechaInicio() {
-        return txtFechaInicio;
-    }
-
-
-    public JFormattedTextField getTxtHoraFin() {
-        return txtHoraFin;
-    }
-
-
-    public JFormattedTextField getTxtHoraInicio() {
-        return txtHoraInicio;
-    }
-
-    public JTable getTblDatosLogs() {
-        return tblDatosLogs;
-    }
-
-
-
-    
-
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
         pnlPestañas1 = new javax.swing.JTabbedPane();
@@ -173,56 +116,126 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
         txtAreaArduino = new javax.swing.JTextArea();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setBackground(new Color(245, 247, 250));
 
-        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Datos Del Usuario", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Tahoma", 0, 14))); // NOI18N
+        pnlPestañas1.setBackground(new Color(245, 247, 250));
+        pnlPestañas1.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        pnlPestañas1.setOpaque(true);
+        pnlPestañas1.setBorder(new EmptyBorder(6, 6, 6, 6));
 
-        lblContra.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jPanel4.setBackground(new Color(245, 247, 250));
+        jPanel4.setOpaque(true);
+
+        jPanel5.setBackground(Color.WHITE);
+        jPanel5.setOpaque(true);
+        jPanel5.setBorder(new CompoundBorder(
+            new LineBorder(new Color(220, 225, 231), 1, true),
+            new EmptyBorder(12, 12, 12, 12)
+        ));
+
+        lblContra.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblContra.setText("Contraseña:");
 
         txtID.setEditable(false);
+        txtID.setBackground(Color.WHITE); // Fondo blanco
+        txtID.setForeground(new Color(17, 24, 39));
+        txtID.setFont(new Font("Segoe UI", Font.BOLD, 13)); // ID en negrita
+        txtID.setBorder(new CompoundBorder(
+            new LineBorder(new Color(210, 215, 221), 1, true),
+            new EmptyBorder(6, 10, 6, 10)
+        ));
         txtID.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtIDActionPerformed(evt);
             }
         });
 
-        lblID.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblID.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblID.setText("ID:");
 
+        txtNombre.setBackground(Color.WHITE);
+        txtNombre.setForeground(new Color(17, 24, 39));
+        txtNombre.setBorder(new CompoundBorder(
+            new LineBorder(new Color(210, 215, 221), 1, true),
+            new EmptyBorder(6, 10, 6, 10)
+        ));
         txtNombre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtNombreActionPerformed(evt);
             }
         });
 
-        lblNombre.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        lblNombre.setFont(new Font("Segoe UI", Font.BOLD, 14));
         lblNombre.setText("Nombre:");
-
-        btnNuevoUsuario.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        
+        btnNuevoUsuario.setBackground(new Color(37, 99, 235));
+        btnNuevoUsuario.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnNuevoUsuario.setForeground(Color.WHITE);
         btnNuevoUsuario.setText("Guardar Nuevo Usuario");
+        // Aquí aumenté el grosor a 2 y oscurecí más el color del borde
+        btnNuevoUsuario.setBorder(new CompoundBorder(
+            new LineBorder(new Color(20, 80, 200), 2, true), 
+            new EmptyBorder(10, 14, 10, 14)
+        ));
+        btnNuevoUsuario.setFocusPainted(false);
+        btnNuevoUsuario.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnNuevoUsuario.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) { btnNuevoUsuario.setBackground(new Color(37, 99, 235).brighter()); }
+            public void mouseExited(MouseEvent e) { btnNuevoUsuario.setBackground(new Color(37, 99, 235)); }
+        });
         btnNuevoUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnNuevoUsuarioActionPerformed(evt);
             }
         });
 
-        btnCambiarContrasena.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        btnCambiarContrasena.setBackground(new Color(100, 116, 139));
+        btnCambiarContrasena.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnCambiarContrasena.setForeground(Color.WHITE);
         btnCambiarContrasena.setText("Modificar Contraseña");
+        btnCambiarContrasena.setBorder(new CompoundBorder(
+            new LineBorder(new Color(80, 96, 120), 2, true),
+            new EmptyBorder(10, 14, 10, 14)
+        ));
+        btnCambiarContrasena.setFocusPainted(false);
+        btnCambiarContrasena.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnCambiarContrasena.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) { btnCambiarContrasena.setBackground(new Color(100, 116, 139).brighter()); }
+            public void mouseExited(MouseEvent e) { btnCambiarContrasena.setBackground(new Color(100, 116, 139)); }
+        });
         btnCambiarContrasena.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCambiarContrasenaActionPerformed(evt);
             }
         });
 
-        btnEliminarUsuario.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
+        btnEliminarUsuario.setBackground(new Color(220, 38, 38));
+        btnEliminarUsuario.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnEliminarUsuario.setForeground(Color.WHITE);
         btnEliminarUsuario.setText("Eliminar Usuario");
+        btnEliminarUsuario.setBorder(new CompoundBorder(
+            new LineBorder(new Color(180, 30, 30), 2, true),
+            new EmptyBorder(10, 14, 10, 14)
+        ));
+        btnEliminarUsuario.setFocusPainted(false);
+        btnEliminarUsuario.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnEliminarUsuario.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) { btnEliminarUsuario.setBackground(new Color(220, 38, 38).brighter()); }
+            public void mouseExited(MouseEvent e) { btnEliminarUsuario.setBackground(new Color(220, 38, 38)); }
+        });
         btnEliminarUsuario.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnEliminarUsuarioActionPerformed(evt);
             }
         });
 
-        txtContrasena.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtContrasena.setBackground(Color.WHITE);
+        txtContrasena.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        txtContrasena.setForeground(new Color(17, 24, 39));
+        txtContrasena.setBorder(new CompoundBorder(
+            new LineBorder(new Color(210, 215, 221), 1, true),
+            new EmptyBorder(6, 10, 6, 10)
+        ));
         txtContrasena.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtContrasenaActionPerformed(evt);
@@ -245,17 +258,17 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                         .addComponent(btnEliminarUsuario, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCambiarContrasena, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnNuevoUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 157, Short.MAX_VALUE))
+                        .addComponent(btnNuevoUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 180, Short.MAX_VALUE))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblContra, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 77, Short.MAX_VALUE)
+                            .addComponent(txtNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
                             .addComponent(txtID)
                             .addComponent(txtContrasena))))
-                .addContainerGap(71, Short.MAX_VALUE))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -282,29 +295,74 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
                 .addComponent(btnEliminarUsuario))
         );
 
+        jScrollPane1.setBackground(Color.WHITE);
+        jScrollPane1.setOpaque(true);
+        jScrollPane1.getViewport().setBackground(Color.WHITE);
+        jScrollPane1.setBorder(new CompoundBorder(
+            new EmptyBorder(10, 10, 10, 10),
+            BorderFactory.createTitledBorder(
+                new LineBorder(new Color(220, 225, 231), 1, true),
+                " Usuarios Registrados ",
+                TitledBorder.LEFT,
+                TitledBorder.TOP,
+                new Font("Segoe UI", Font.BOLD, 14),
+                new Color(55, 65, 81)
+            )
+        ));
+
+        tblUsuarios.setRowHeight(28);
+        tblUsuarios.setShowHorizontalLines(false);
+        tblUsuarios.setShowVerticalLines(false);
+        tblUsuarios.setGridColor(new Color(230, 233, 237));
+        tblUsuarios.setSelectionBackground(new Color(220, 235, 252));
+        tblUsuarios.setSelectionForeground(new Color(17, 24, 39));
+        tblUsuarios.getTableHeader().setReorderingAllowed(false);
+        tblUsuarios.getTableHeader().setResizingAllowed(false);
+        tblUsuarios.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        tblUsuarios.getTableHeader().setBackground(new Color(30, 41, 59));
+        tblUsuarios.getTableHeader().setForeground(Color.WHITE);
+        tblUsuarios.getTableHeader().setPreferredSize(new Dimension(tblUsuarios.getTableHeader().getWidth(), 30));
+
         tblUsuarios.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "ID Usuario", "Nombre", "Contraseña"
-            }
+            new Object [][] {},
+            new String [] { "ID Usuario", "Nombre", "Contraseña" }
         ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
+            Class[] types = new Class [] { java.lang.Integer.class, java.lang.String.class, java.lang.String.class };
+            boolean[] canEdit = new boolean [] { false, false, false };
+            public Class getColumnClass(int columnIndex) { return types [columnIndex]; }
+            public boolean isCellEditable(int rowIndex, int columnIndex) { return canEdit [columnIndex]; }
         });
+        
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (!isSelected) {
+                    c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(248, 250, 252));
+                }
+                setBorder(new EmptyBorder(0, 10, 0, 10));
+                setHorizontalAlignment(JLabel.CENTER);
+                return c;
+            }
+        };
+        for(int i=0; i<tblUsuarios.getColumnCount(); i++) tblUsuarios.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+
+        DefaultTableCellRenderer passwordRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                String texto = "";
+                if(value != null) for(int i=0; i<value.toString().length(); i++) texto += "•";
+                Component c = super.getTableCellRendererComponent(table, texto, isSelected, hasFocus, row, column);
+                if (!isSelected) {
+                    c.setBackground(row % 2 == 0 ? Color.WHITE : new Color(248, 250, 252));
+                }
+                setBorder(new EmptyBorder(0, 10, 0, 10));
+                setHorizontalAlignment(JLabel.CENTER);
+                return c;
+            }
+        };
+        tblUsuarios.getColumnModel().getColumn(2).setCellRenderer(passwordRenderer);
+
         jScrollPane1.setViewportView(tblUsuarios);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -314,46 +372,67 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 369, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 600, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 297, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 450, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pnlPestañas1.addTab("Gestión de Usuario", jPanel4);
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jPanel2.setBackground(new Color(245, 247, 250));
+        jPanel2.setOpaque(true);
+
+        jLabel1.setFont(new Font("Segoe UI", Font.BOLD, 14));
         jLabel1.setText("Hora de fin:");
 
+        jScrollPane2.setBackground(Color.WHITE);
+        jScrollPane2.setOpaque(true);
+        jScrollPane2.getViewport().setBackground(Color.WHITE);
+        jScrollPane2.setBorder(new CompoundBorder(
+            new EmptyBorder(10, 10, 10, 10),
+            BorderFactory.createTitledBorder(
+                new LineBorder(new Color(220, 225, 231), 1, true),
+                " Accesos ",
+                TitledBorder.LEFT,
+                TitledBorder.TOP,
+                new Font("Segoe UI", Font.BOLD, 14),
+                new Color(55, 65, 81)
+            )
+        ));
+
+        tblDatosLogs.setRowHeight(28);
+        tblDatosLogs.setShowHorizontalLines(false);
+        tblDatosLogs.setShowVerticalLines(false);
+        tblDatosLogs.setGridColor(new Color(230, 233, 237));
+        tblDatosLogs.setSelectionBackground(new Color(220, 235, 252));
+        tblDatosLogs.setSelectionForeground(new Color(17, 24, 39));
+        tblDatosLogs.getTableHeader().setReorderingAllowed(false);
+        tblDatosLogs.getTableHeader().setResizingAllowed(false);
+        tblDatosLogs.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 13));
+        tblDatosLogs.getTableHeader().setBackground(new Color(30, 41, 59));
+        tblDatosLogs.getTableHeader().setForeground(Color.WHITE);
+        tblDatosLogs.getTableHeader().setPreferredSize(new Dimension(tblDatosLogs.getTableHeader().getWidth(), 30));
+
         tblDatosLogs.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-
-            },
-            new String [] {
-                "ID", "USUARIO", "FECHA", "HORA", "INTENTOS", "ESTADO"
-            }
+            new Object [][] {},
+            new String [] { "ID", "USUARIO", "FECHA", "HORA", "INTENTOS", "ESTADO" }
         ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
+            Class[] types = new Class [] { java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class };
+            boolean[] canEdit = new boolean [] { false, false, false, false, false, false };
+            public Class getColumnClass(int columnIndex) { return types [columnIndex]; }
+            public boolean isCellEditable(int rowIndex, int columnIndex) { return canEdit [columnIndex]; }
         });
+        
+        for(int i=0; i<tblDatosLogs.getColumnCount(); i++) tblDatosLogs.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
+
         jScrollPane2.setViewportView(tblDatosLogs);
 
         try {
@@ -361,21 +440,40 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
-        txtFechaInicio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtFechaInicio.setBackground(Color.WHITE);
+        txtFechaInicio.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        txtFechaInicio.setForeground(new Color(17, 24, 39));
+        txtFechaInicio.setBorder(new CompoundBorder(
+            new LineBorder(new Color(210, 215, 221), 1, true),
+            new EmptyBorder(6, 10, 6, 10)
+        ));
         txtFechaInicio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtFechaInicioActionPerformed(evt);
             }
         });
 
+        btnFiltrarFecha.setBackground(new Color(37, 99, 235));
+        btnFiltrarFecha.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnFiltrarFecha.setForeground(Color.WHITE);
         btnFiltrarFecha.setText("Buscar Por Fecha");
+        btnFiltrarFecha.setBorder(new CompoundBorder(
+            new LineBorder(new Color(20, 80, 200), 2, true),
+            new EmptyBorder(10, 14, 10, 14)
+        ));
+        btnFiltrarFecha.setFocusPainted(false);
+        btnFiltrarFecha.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnFiltrarFecha.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) { btnFiltrarFecha.setBackground(new Color(37, 99, 235).brighter()); }
+            public void mouseExited(MouseEvent e) { btnFiltrarFecha.setBackground(new Color(37, 99, 235)); }
+        });
         btnFiltrarFecha.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnFiltrarFechaActionPerformed(evt);
             }
         });
 
-        jLabel3.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel3.setFont(new Font("Segoe UI", Font.BOLD, 14));
         jLabel3.setText("Fecha de fin:");
 
         try {
@@ -383,17 +481,23 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
-        txtFechaFin.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtFechaFin.setBackground(Color.WHITE);
+        txtFechaFin.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        txtFechaFin.setForeground(new Color(17, 24, 39));
+        txtFechaFin.setBorder(new CompoundBorder(
+            new LineBorder(new Color(210, 215, 221), 1, true),
+            new EmptyBorder(6, 10, 6, 10)
+        ));
         txtFechaFin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtFechaFinActionPerformed(evt);
             }
         });
 
-        jLabel4.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel4.setFont(new Font("Segoe UI", Font.BOLD, 14));
         jLabel4.setText("Fecha de inicio:");
 
-        jLabel5.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel5.setFont(new Font("Segoe UI", Font.BOLD, 14));
         jLabel5.setText("Hora de inicio:");
 
         try {
@@ -401,7 +505,13 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
-        txtHoraFin.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtHoraFin.setBackground(Color.WHITE);
+        txtHoraFin.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        txtHoraFin.setForeground(new Color(17, 24, 39));
+        txtHoraFin.setBorder(new CompoundBorder(
+            new LineBorder(new Color(210, 215, 221), 1, true),
+            new EmptyBorder(6, 10, 6, 10)
+        ));
         txtHoraFin.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtHoraFinActionPerformed(evt);
@@ -418,7 +528,13 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
         } catch (java.text.ParseException ex) {
             ex.printStackTrace();
         }
-        txtHoraInicio.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        txtHoraInicio.setBackground(Color.WHITE);
+        txtHoraInicio.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        txtHoraInicio.setForeground(new Color(17, 24, 39));
+        txtHoraInicio.setBorder(new CompoundBorder(
+            new LineBorder(new Color(210, 215, 221), 1, true),
+            new EmptyBorder(6, 10, 6, 10)
+        ));
         txtHoraInicio.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtHoraInicioActionPerformed(evt);
@@ -430,7 +546,20 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
             }
         });
 
+        btnGraficarResultados.setBackground(new Color(100, 116, 139));
+        btnGraficarResultados.setFont(new Font("Segoe UI", Font.BOLD, 13));
+        btnGraficarResultados.setForeground(Color.WHITE);
         btnGraficarResultados.setText("Graficar Resultados");
+        btnGraficarResultados.setBorder(new CompoundBorder(
+            new LineBorder(new Color(80, 96, 120), 2, true),
+            new EmptyBorder(10, 14, 10, 14)
+        ));
+        btnGraficarResultados.setFocusPainted(false);
+        btnGraficarResultados.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnGraficarResultados.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) { btnGraficarResultados.setBackground(new Color(100, 116, 139).brighter()); }
+            public void mouseExited(MouseEvent e) { btnGraficarResultados.setBackground(new Color(100, 116, 139)); }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -451,13 +580,14 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
                     .addComponent(jLabel5)
                     .addComponent(jLabel1))
                 .addGap(18, 18, 18)
+
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(txtHoraInicio, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtHoraFin, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(120)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnGraficarResultados)
-                    .addComponent(btnFiltrarFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnFiltrarFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
@@ -487,15 +617,21 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                         .addComponent(btnGraficarResultados)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)))
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 206, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 400, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pnlPestañas1.addTab("Reportes de Acceso", jPanel2);
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jPanel3.setBackground(new Color(245, 247, 250));
+        jPanel3.setOpaque(true);
+
+        jLabel2.setFont(new Font("Segoe UI", Font.BOLD, 14));
         jLabel2.setText("Seleccionar Puerto COM:");
 
+        boxPuertosArduino.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        boxPuertosArduino.setBackground(Color.WHITE);
+        boxPuertosArduino.setBorder(new LineBorder(new Color(210, 215, 221), 1, true));
         boxPuertosArduino.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "COM1", "COM2", "COM3", "COM4", "COM5" }));
         boxPuertosArduino.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -503,8 +639,20 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
             }
         });
 
-        btnConectarArduino.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
+        btnConectarArduino.setBackground(new Color(16, 185, 129));
+        btnConectarArduino.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        btnConectarArduino.setForeground(Color.WHITE);
         btnConectarArduino.setText("CONECTAR ARDUINO");
+        btnConectarArduino.setBorder(new CompoundBorder(
+            new LineBorder(new Color(12, 140, 95), 2, true),
+            new EmptyBorder(10, 14, 10, 14)
+        ));
+        btnConectarArduino.setFocusPainted(false);
+        btnConectarArduino.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnConectarArduino.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) { btnConectarArduino.setBackground(new Color(16, 185, 129).brighter()); }
+            public void mouseExited(MouseEvent e) { btnConectarArduino.setBackground(new Color(16, 185, 129)); }
+        });
         btnConectarArduino.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnConectarArduinoActionPerformed(evt);
@@ -512,9 +660,25 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
         });
 
         txtAreaArduino.setEditable(false);
+        txtAreaArduino.setBackground(new Color(30, 41, 59));
+        txtAreaArduino.setForeground(new Color(50, 255, 100));
+        txtAreaArduino.setFont(new Font("Consolas", Font.PLAIN, 12));
         txtAreaArduino.setColumns(20);
         txtAreaArduino.setRows(5);
         jScrollPane3.setViewportView(txtAreaArduino);
+        jScrollPane3.setOpaque(true);
+        jScrollPane3.getViewport().setBackground(Color.WHITE);
+        jScrollPane3.setBorder(new CompoundBorder(
+                new EmptyBorder(10, 10, 10, 10),
+                BorderFactory.createTitledBorder(
+                        BorderFactory.createLineBorder(new Color(220, 225, 231), 1, true),
+                        " Monitor ",
+                        TitledBorder.LEFT,
+                        TitledBorder.TOP,
+                        new Font("Segoe UI", Font.BOLD, 14),
+                        new Color(55, 65, 81)
+                )
+        ));
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -544,6 +708,26 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
 
         pnlPestañas1.addTab("Monitor Del Sistema", jPanel3);
 
+        String[] headers = {"Gestión de Usuario", "Reportes de Acceso", "Monitor del Sistema"};
+        String[] icons = {"/Vista/img/user.png", "/Vista/img/report.png", "/Vista/img/arduino.png"};
+        for(int i=0; i<headers.length; i++) {
+            JPanel tab = new JPanel();
+            tab.setOpaque(true);
+            tab.setBackground(new Color(15, 23, 42));
+            JLabel lbl = new JLabel(headers[i]);
+            lbl.setForeground(Color.WHITE);
+            lbl.setFont(new Font("Segoe UI", Font.BOLD, 13));
+            try {
+                ImageIcon icon = new ImageIcon(getClass().getResource(icons[i]));
+                Image img = icon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+                lbl.setIcon(new ImageIcon(img));
+                lbl.setIconTextGap(8);
+            } catch(Exception e){}
+            tab.setBorder(new EmptyBorder(6, 12, 6, 12));
+            tab.add(lbl);
+            pnlPestañas1.setTabComponentAt(i, tab);
+        }
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -552,34 +736,27 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(pnlPestañas1, javax.swing.GroupLayout.PREFERRED_SIZE, 326, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(pnlPestañas1)
         );
+    }
 
-        pack();
-    }// </editor-fold>                        
+    private void txtIDActionPerformed(java.awt.event.ActionEvent evt) {
+    }
 
-    private void txtIDActionPerformed(java.awt.event.ActionEvent evt) {                                      
-        // TODO add your handling code here:
-    }                                     
+    private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {
+    }
 
-    private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {                                          
-        // TODO add your handling code here:
-    }                                         
+    private void txtFechaInicioActionPerformed(java.awt.event.ActionEvent evt) {
+    }
 
-    private void txtFechaInicioActionPerformed(java.awt.event.ActionEvent evt) {                                               
-        // TODO add your handling code here:
-    }                                              
-
-    private void txtContrasenaKeyTyped(java.awt.event.KeyEvent evt) {                                       
+    private void txtContrasenaKeyTyped(java.awt.event.KeyEvent evt) {
         char c = evt.getKeyChar();
         if (!Character.isDigit(c)) {
             evt.consume();
         }
-    }                                      
+    }
 
-    private void btnConectarArduinoActionPerformed(java.awt.event.ActionEvent evt) {                                                   
+    private void btnConectarArduinoActionPerformed(java.awt.event.ActionEvent evt) {
         if (boxPuertosArduino.getItemCount() > 0) {
             String puertoAsignadoArduino = boxPuertosArduino.getSelectedItem().toString();
             
@@ -596,72 +773,121 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
         } else {
             javax.swing.JOptionPane.showMessageDialog(this, "No se detectaron puertos asignados al Arduino, Conectelo");
         }
-    }                                                  
+    }
 
-    private void txtFechaFinActionPerformed(java.awt.event.ActionEvent evt) {                                            
-        // TODO add your handling code here:
-    }                                           
+    private void txtFechaFinActionPerformed(java.awt.event.ActionEvent evt) {
+    }
 
-    private void txtHoraFinKeyTyped(java.awt.event.KeyEvent evt) {                                    
+    private void txtHoraFinKeyTyped(java.awt.event.KeyEvent evt) {
         char d = evt.getKeyChar();
         if (!Character.isDigit(d)) {
             evt.consume();
         }
-    }                                   
+    }
 
-    private void txtHoraInicioKeyTyped(java.awt.event.KeyEvent evt) {                                       
-        // TODO add your handling code here:
-    }                                      
+    private void txtHoraInicioKeyTyped(java.awt.event.KeyEvent evt) {
+    }
 
-    private void txtContrasenaActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        // TODO add your handling code here:
-    }                                             
+    private void txtContrasenaActionPerformed(java.awt.event.ActionEvent evt) {
+    }
 
     private void btnNuevoUsuarioActionPerformed(java.awt.event.ActionEvent evt) {    
         txtContrasena.setEditable(true);
         txtNombre.setEditable(true);                                          
         controlador.guardarNuevoUsuario();
-    }                                               
+        
+        actualizarSiguienteID();
+    }
 
-    private void btnCambiarContrasenaActionPerformed(java.awt.event.ActionEvent evt) {                                                     
+    private void btnCambiarContrasenaActionPerformed(java.awt.event.ActionEvent evt) {
         controlador.modificarContraseña();
         txtContrasena.setEditable(true);
         txtNombre.setEditable(true);   
-    }                                                    
+    }
 
-    private void btnEliminarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {                                                   
+    private void btnEliminarUsuarioActionPerformed(java.awt.event.ActionEvent evt) {
         controlador.eliminarUsuario();
         txtContrasena.setEditable(true);
         txtNombre.setEditable(true);   
-    }                                                  
+        
+        actualizarSiguienteID();
+    }
 
-    private void txtHoraInicioActionPerformed(java.awt.event.ActionEvent evt) {                                              
-        // TODO add your handling code here:
-    }                                             
+    private void txtHoraInicioActionPerformed(java.awt.event.ActionEvent evt) {
+    }
 
-    private void txtHoraFinActionPerformed(java.awt.event.ActionEvent evt) {                                           
-        // TODO add your handling code here:
-    }                                          
+    private void txtHoraFinActionPerformed(java.awt.event.ActionEvent evt) {
+    }
 
-    private void btnFiltrarFechaActionPerformed(java.awt.event.ActionEvent evt) {                                                
+    private void btnFiltrarFechaActionPerformed(java.awt.event.ActionEvent evt) {
         controlador.filtraListadoLogsPorFecha();
-    }                                               
+    }
 
-    private void boxPuertosArduinoActionPerformed(java.awt.event.ActionEvent evt) {                                                  
-        // TODO add your handling code here:
+    private void boxPuertosArduinoActionPerformed(java.awt.event.ActionEvent evt) {
     }  
     
-    private void tblUsuariosMouseClicked(java.awt.event.MouseEvent evt) {                                         
+    private void tblUsuariosMouseClicked(java.awt.event.MouseEvent evt) {
         txtContrasena.setEditable(false);
         txtNombre.setEditable(false);
         controlador.seleccionarUsuarioDeTabla();    
     }
 
-    /**
-     * @param args the command line arguments
-     */
+    private void btnGraficarResultadosActionPerformed(java.awt.event.ActionEvent evt) {                                                      
+        controlador.graficarLogs();
+    }
 
-    // Variables declaration - do not modify                     
+    public JTable getTblUsuarios() {
+        return tblUsuarios;
+    }
+
+    public void setTblUsuarios(JTable tblUsuarios) {
+        this.tblUsuarios = tblUsuarios;
+    }
+
+    public javax.swing.JPasswordField getTxtContrasena() {
+        return txtContrasena;
+    }
+
+    public void setTxtContrasena(javax.swing.JPasswordField txtContrasena) {
+        this.txtContrasena = txtContrasena;
+    }
+
+    public JTextField getTxtID() {
+        return txtID;
+    }
+
+    public void setTxtID(JTextField txtID) {
+        this.txtID = txtID;
+    }
+
+    public JTextField getTxtNombre() {
+        return txtNombre;
+    }
+
+    public void setTxtNombre(JTextField txtNombre) {
+        this.txtNombre = txtNombre;
+    }
+
+     public javax.swing.JFormattedTextField getTxtFechaFin() {
+        return txtFechaFin;
+    }
+
+    public javax.swing.JFormattedTextField getTxtFechaInicio() {
+        return txtFechaInicio;
+    }
+
+    public javax.swing.JFormattedTextField getTxtHoraFin() {
+        return txtHoraFin;
+    }
+
+    public javax.swing.JFormattedTextField getTxtHoraInicio() {
+        return txtHoraInicio;
+    }
+
+    public JTable getTblDatosLogs() {
+        return tblDatosLogs;
+    }
+
     private javax.swing.JComboBox<String> boxPuertosArduino;
     private javax.swing.JButton btnCambiarContrasena;
     private javax.swing.JButton btnConectarArduino;
@@ -695,5 +921,4 @@ public VentanaGeneralP(traspasoDAO instruccionesDAO, DatosUsuario usuarioUsado) 
     private javax.swing.JFormattedTextField txtHoraInicio;
     private javax.swing.JTextField txtID;
     private javax.swing.JTextField txtNombre;
-    // End of variables declaration                   
 }
