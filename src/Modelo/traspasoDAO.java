@@ -13,32 +13,24 @@ public class traspasoDAO {
     PreparedStatement prepararConsulta;
     ResultSet recibirConsulta;
     
-    public boolean registrarUsuario(DatosUsuario usuario) {
+public boolean registrarUsuario(DatosUsuario usuario) {
 
-        String peticionSql = "INSERT INTO usuarios (nombre, contrasena) VALUES (?, ?)";
+        String peticionSql = "INSERT INTO usuarios (id, nombre, contrasena) VALUES (?, ?, ?)";
         
         try {
             conexionBD = ConexionBD.conectar();
-
-            prepararConsulta = conexionBD.prepareStatement(peticionSql, Statement.RETURN_GENERATED_KEYS);
+            prepararConsulta = conexionBD.prepareStatement(peticionSql);
             
-            prepararConsulta.setString(1, usuario.getNombreU());   
-            prepararConsulta.setString(2, usuario.getContrasena()); 
+            prepararConsulta.setInt(1, usuario.getId());   
+            prepararConsulta.setString(2, usuario.getNombreU());   
+            prepararConsulta.setString(3, usuario.getContrasena()); 
             
-            int filasPedir = prepararConsulta.executeUpdate();
+            prepararConsulta.execute(); 
             
-            if (filasPedir > 0) {
-                ResultSet idObtenido = prepararConsulta.getGeneratedKeys();
-                if (idObtenido.next()) {
-                    int idGenerado = idObtenido.getInt(1);
-                    usuario.setId(idGenerado);
-                    return true;
-                }
-            }
-            return false; 
+            return true; 
             
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Erro al registrar el usuario en la base de datos: ");
+            JOptionPane.showMessageDialog(null, "Error al registrar el usuario: " + e.getMessage());
             return false;
         } finally {
             ConexionBD.cerrar();
@@ -47,7 +39,7 @@ public class traspasoDAO {
     
     public List<DatosUsuario> listarUsuarios() {
         List<DatosUsuario> listaUsuariosBD = new ArrayList<>();
-        String peticionSql = "SELECT * FROM usuarios";
+        String peticionSql = "SELECT * FROM usuarios WHERE id != 0";
         
         try {
             conexionBD = ConexionBD.conectar();

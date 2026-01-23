@@ -10,7 +10,7 @@ import javax.swing.table.DefaultTableModel;
 
 import BaseDeDatos.ConexionBD;
 import Modelo.*;
-import Vista.VentanaGeneralP;
+import Vista.*;
 import Arduino.ArduinoService;
 
 public class ControladorS {
@@ -33,24 +33,35 @@ public class ControladorS {
          
         String nombreUsuario = ventanaGeneral.getTxtNombre().getText();
         String contrasenaUsuario = String.valueOf(ventanaGeneral.getTxtContrasena().getPassword());
+        String idAsignado = ventanaGeneral.getTxtID().getText();
 
         if(nombreUsuario.isEmpty() || contrasenaUsuario.isEmpty()){
             JOptionPane.showMessageDialog(null, "Por favor, complete los campos de nombre y contraseña.");
             return;
         }
 
+        try {
+            int idBd = Integer.parseInt(idAsignado);
+            usuarioUsado.setId(idBd);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(null, "El ID no es válido.");
+            return;
+        }
+
         usuarioUsado.setNombreU(nombreUsuario);
         usuarioUsado.setContrasena(contrasenaUsuario);
 
-        if(instruccionesDAO.registrarUsuario(usuarioUsado)){
-            JOptionPane.showMessageDialog(null, "Se agrego correctamente al usuario.");
-            JTextField txtMostrarID = ventanaGeneral.getTxtID();
-            txtMostrarID.setText(String.valueOf(usuarioUsado.getId()));
-            mostrarUsuariosTabla();
-            JOptionPane.showMessageDialog(null, "Se le asigno el ID: " + usuarioUsado.getId()+"\n"+"Recueredelo lo usara como clave de acceso");
-            ventanaGeneral.getTxtID().setText("");
+if(instruccionesDAO.registrarUsuario(usuarioUsado)){
+            JOptionPane.showMessageDialog(null, "Se agregó correctamente al usuario.");
+            
+            mostrarUsuariosTabla(); 
+            JOptionPane.showMessageDialog(null, "Usuario registrado con el ID: " + usuarioUsado.getId());
+            
             ventanaGeneral.getTxtNombre().setText("");
             ventanaGeneral.getTxtContrasena().setText("");
+            
+            ventanaGeneral.actualizarSiguienteID(); 
+            
         } else {
             System.out.println("Error al registrar el usuario del programa.");
         }
@@ -227,11 +238,13 @@ public class ControladorS {
         List<DatosLogs> listaParaGrafica = instruccionesDAO.filtrarListadoLogs(fechaIni, horaIni, fechaFin, horaFin);
 
         if (listaParaGrafica.isEmpty()) {
-            JOptionPane.showMessageDialog(ventanaGeneral, "No hay datos en el rango seleccionado para graficar.");
+            JOptionPane.showMessageDialog(ventanaGeneral, "No hay datos en el rango de fechas seleccionado.");
             return;
+        }
+
+        VentanaGraficaLogs grafica = new VentanaGraficaLogs(listaParaGrafica);
+        grafica.setVisible(true);
     }
-        new ControladorGrafica(listaParaGrafica);
-    }   
 
     
     

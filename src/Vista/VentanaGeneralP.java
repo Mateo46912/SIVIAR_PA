@@ -561,6 +561,12 @@ public class VentanaGeneralP extends javax.swing.JFrame {
             public void mouseExited(MouseEvent e) { btnGraficarResultados.setBackground(new Color(100, 116, 139)); }
         });
 
+        btnGraficarResultados.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            btnGraficarResultadosActionPerformed(evt);
+        }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
