@@ -28,7 +28,8 @@ public class ControladorS {
         mostrarUsuariosTabla();
     }
    
-    //Registros (Pestaña 1)
+    //Registros (Pestaña 1) 
+    //Agrega un usuario nuevo desde la interfaz
     public void guardarNuevoUsuario() {
          
         String nombreUsuario = ventanaGeneral.getTxtNombre().getText();
@@ -38,6 +39,18 @@ public class ControladorS {
         if(nombreUsuario.isEmpty() || contrasenaUsuario.isEmpty()){
             JOptionPane.showMessageDialog(null, "Por favor, complete los campos de nombre y contraseña.");
             return;
+        }
+
+        if (contrasenaUsuario == null ||contrasenaUsuario.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "La contraseña esta bien"); {
+        return;
+            }
+        }    
+
+        if (!contrasenaUsuario.matches("^\\d{4,8}$")) {
+            JOptionPane.showMessageDialog(null, "La contraseña no cumple con el formato.\nDebe tener minimo 5 y maximo 8 dígitos numéricos.");
+            ventanaGeneral.getTxtContrasena().setText("");
+            return; 
         }
 
         try {
@@ -65,12 +78,13 @@ if(instruccionesDAO.registrarUsuario(usuarioUsado)){
         } else {
             System.out.println("Error al registrar el usuario del programa.");
         }
-
     }
 
     public void modificarContraseña(){
         String idUsarioModificar = ventanaGeneral.getTxtID().getText();
         
+        
+
         if (idUsarioModificar.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Primero seleccione un usuario de la tabla para modificar.");
             return;
@@ -80,6 +94,7 @@ if(instruccionesDAO.registrarUsuario(usuarioUsado)){
         
         String  contraseñaActualValidar = JOptionPane.showInputDialog(null, "Ingrese la contraseña actual de el usuario seleccionado para proseguir:");
         
+
         if (contraseñaActualValidar == null || contraseñaActualValidar.isEmpty()) {
             return; 
         }

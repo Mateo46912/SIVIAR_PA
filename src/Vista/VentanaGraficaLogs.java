@@ -157,6 +157,16 @@ public class VentanaGraficaLogs extends JFrame {
 
             g2.setColor(color.darker());
             g2.drawRect(x, yBase - alturaBarra, ancho, alturaBarra);
+
+            g2.setFont(new Font("Segoe UI", Font.BOLD, 14));
+            
+            String textoNumero = String.valueOf(valor);
+            FontMetrics fm = g2.getFontMetrics();
+            
+            int xTexto = x + (ancho - fm.stringWidth(textoNumero)) / 2;
+            int yTexto = (yBase - alturaBarra) + (alturaBarra / 2) + (fm.getAscent() / 2) - 2;
+            
+            g2.drawString(textoNumero, xTexto, yTexto);
         }
 
         private void dibujarLeyenda(Graphics2D g2, int ancho, int alto, Color c1, Color c2) {

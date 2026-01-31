@@ -12,7 +12,9 @@ public class traspasoDAO {
     Connection conexionBD;
     PreparedStatement prepararConsulta;
     ResultSet recibirConsulta;
-    
+
+
+//Metodo para registrar un nuevo usuario en la base de datos
 public boolean registrarUsuario(DatosUsuario usuario) {
 
         String peticionSql = "INSERT INTO usuarios (id, nombre, contrasena) VALUES (?, ?, ?)";
@@ -36,7 +38,7 @@ public boolean registrarUsuario(DatosUsuario usuario) {
             ConexionBD.cerrar();
         }
     }
-    
+    //Metodo para obtener la lista de usuarios registrados en la base de datos
     public List<DatosUsuario> listarUsuarios() {
         List<DatosUsuario> listaUsuariosBD = new ArrayList<>();
         String peticionSql = "SELECT * FROM usuarios WHERE id != 0";
@@ -63,7 +65,7 @@ public boolean registrarUsuario(DatosUsuario usuario) {
         
         return listaUsuariosBD; 
     }
-
+//Metodo para modificar la contrasena de un usuario en la base de datos
     public boolean modificarUsuario(DatosUsuario usuario) {
         String peticionSql = "UPDATE usuarios SET contrasena = ? WHERE id = ?";
         
@@ -84,7 +86,7 @@ public boolean registrarUsuario(DatosUsuario usuario) {
             ConexionBD.cerrar();
         }
     }
-    
+    //Metodo para eliminar un usuario de la base de datos
     public boolean eliminarUsuario(int id) {
         String peticionSql = "DELETE FROM usuarios WHERE id = ?";
         

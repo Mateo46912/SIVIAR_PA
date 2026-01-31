@@ -67,7 +67,7 @@ public class ArduinoService {
         return false;
     }
 
-
+// Validar si el mensaje recibido del Arduino está completo (termina con un salto de línea)
     private void validarMensajeCompletoA() {
 
         int verificarSaltoDeLinea = guardarDatosArduino.indexOf("\n");
@@ -104,7 +104,7 @@ public class ArduinoService {
             System.out.println("Error procesando el tipo de mensaje que envia el arduino: " + e.getMessage());
         }
     }
-
+ // Metodo para verificar si el ID recibido desde el Arduino existe en la base de datos
    private void verificarIDLlegada(int idRecibido) {
 
         List<DatosUsuario> usuariosRegistradosBD = DatosBdDao.listarUsuarios();
@@ -128,7 +128,7 @@ public class ArduinoService {
             System.out.println("No se encontró el ID en la base de datos: " + idRecibido);
         }
     }
-
+// Metodo para verificar si la contraseña recibida desde el Arduino es correcta
     private void verificarContrasenaLlegada(String contrasenaRecibida) {
 
         String contrasenaRealRegistrada = "";
@@ -151,6 +151,7 @@ public class ArduinoService {
             idLlegadaTemp = 0;
         } else {
             contadorFallidosContraseña++;
+
             if (contadorFallidosContraseña >= 3) {
                 DarOrdenArduino("BLOQUEO");
                 registrarEnBaseDeDatos(idLlegadaTemp, nombreUsuario, "Bloqueado", contadorFallidosContraseña);

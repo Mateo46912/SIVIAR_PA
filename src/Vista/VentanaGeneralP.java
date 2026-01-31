@@ -37,10 +37,10 @@ public class VentanaGeneralP extends javax.swing.JFrame {
 
         this.controlador = new ControladorS(this, instruccionesDAO, usuarioUsado);
         
-        this.setTitle("Sistema - Panel General");
+        this.setTitle("S.I.V.A.R - Sistema de Vigilancia y Acceso Remoto");
         this.setResizable(false);
 
-        this.setSize(1000, 460); 
+        this.setSize(1000, 560); 
         this.setLocationRelativeTo(null);
 
         actualizarSiguienteID();
